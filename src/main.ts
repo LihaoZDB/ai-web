@@ -7,6 +7,7 @@ import zhCn from "element-plus/es/locale/lang/zh-cn";
 import ElementPlus from "element-plus";
 import "element-plus/dist/index.css";
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
+import focusPlugin from './directives/focus.ts'
 
 const app = createApp(App);
 const pinia = createPinia();
@@ -16,5 +17,6 @@ app.use(ElementPlus, {
   locale: zhCn,
 });
 app.use(router);
+app.use(focusPlugin)
 
 app.mount("#app");
