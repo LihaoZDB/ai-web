@@ -1,6 +1,6 @@
 <template>
     <header class="flex items-center h-20 border-b border-gray-200 justify-center sticky top-0 bg-white z-10">
-        <div class="w-[1200px] mx-auto flex items-center justify-between">
+        <div class="w-300 mx-auto flex items-center justify-between">
             <div
                 class="text-2xl font-bold bg-indigo-700 text-white rounded-[10px] px-2 py-1 w-10 flex items-center justify-center h-10 ">
                 E</div>
