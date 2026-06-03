@@ -3,6 +3,9 @@ import { useUserStore } from "@/stores/user";
 import router from "@/router";
 import { refreshTokenApi } from "./auth";
 import { ElMessage } from "element-plus";
+export const uploadUrl = import.meta.env.DEV
+  ? "http://192.168.32.19:9000"
+  : "https://线上地址待定";
 export const timeout = 50000;
 // server服务端接口
 export const serverApi = axios.create({
@@ -78,7 +81,7 @@ serverApi.interceptors.response.use(
 
 // ai服务端接口
 export const aiApi = axios.create({
-  baseURL: "/api/ai/v1",
+  baseURL: "/ai/v1",
   timeout,
 });
 
