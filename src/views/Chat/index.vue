@@ -32,7 +32,7 @@ const sendMessage = (
   webSearch: boolean,
 ) => {
   list.value.push({ role: "human", content: message, type: "chat" });
-  list.value.push({ role: "ai", content: "", type: "chat" });
+  list.value.push({ role: "ai", content: "", reasoning: "", type: "chat" });
   sse<ChatMessage, ChatDto>(
     CHAT_URL,
     "POST",
@@ -44,7 +44,12 @@ const sendMessage = (
       webSearch,
     },
     (data) => {
-      list.value[list.value.length - 1].content += data.content;
+      if (data.type === "reasoning") {
+        list.value[list.value.length - 1].reasoning += data.content;
+      }
+      if (data.type === "chat") {
+        list.value[list.value.length - 1].content += data.content;
+      }
     },
   );
 };

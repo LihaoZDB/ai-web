@@ -77,6 +77,18 @@
           type="primary"
           @click="sendMessage"
         ></el-button>
+        <el-button
+          class="ml-2"
+          :icon="Mic"
+          type="primary"
+          @click="startRecording"
+        ></el-button>
+        <el-button
+          class="ml-2"
+          :icon="VideoPause"
+          type="primary"
+          @click="stopRecording"
+        ></el-button>
       </div>
     </div>
   </div>
@@ -84,10 +96,17 @@
 
 <script setup lang="ts">
 import { ref, useTemplateRef, watch, nextTick } from "vue";
-import { Position } from "@element-plus/icons-vue";
+import { Position, Mic, VideoPause } from "@element-plus/icons-vue";
 import type { ChatMessageList } from "@en/common/chat";
 import "@/assets/css/deep-seek.css";
 import { marked } from "marked";
+import { useVoiceToText } from "@/hooks/useVoiceToText";
+const { start, stop } = useVoiceToText({
+  lang: "zh-CN",
+  continuous: true,
+  interimResults: false,
+  maxAlternatives: 1,
+});
 const props = defineProps<{
   list?: ChatMessageList;
 }>();
@@ -101,8 +120,23 @@ const sendMessage = () => {
   emits("onSendMessage", message.value, deepThink.value, webSearch.value);
   message.value = "";
 };
+
+// markdown解析HTML
 const parseMarkdown = (content: string) => {
   return marked.parse(content);
+};
+
+// 开始录音
+const startRecording = () => {
+  start((result) => {
+    message.value = result;
+  });
+};
+
+// 停止录音
+const stopRecording = () => {
+  stop();
+  sendMessage();
 };
 
 watch(
