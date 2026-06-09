@@ -68,7 +68,7 @@
               type="button"
               class="mt-4 w-full py-2.5 rounded-xl text-sm font-medium text-indigo-600 border border-indigo-200 bg-white hover:bg-indigo-50 transition-colors cursor-pointer"
             >
-              {{ currentTab === 'list' ? '购买课程' : '学习课程' }}
+              {{ currentTab === "list" ? "购买课程" : "学习课程" }}
             </button>
           </div>
         </article>
@@ -88,6 +88,8 @@ import { useLogin } from "@/hooks/useLogin";
 import CoursePay from "./components/Pay.vue";
 import type { Course } from "@en/common/course";
 import { useUserStore } from "@/stores/user";
+import { useRouter } from "vue-router";
+const router = useRouter();
 const userStore = useUserStore();
 const { login } = useLogin();
 const currentTab = ref("list");
@@ -109,8 +111,12 @@ const imageSrc = (url: string) => {
 //打开支付弹框
 const openPay = async (course: Course) => {
   await login();
-  payVisible.value = true;
-  selectedCourse.value = course;
+  if (currentTab.value === "list") {
+    payVisible.value = true;
+    selectedCourse.value = course;
+  } else {
+    router.push(`/courses/learn/${course.id}/${course.name}`);
+  }
 };
 onMounted(() => {
   getList();

@@ -3,8 +3,14 @@ import Course from "@/views/Course/index.vue";
 
 export default [
   {
-    path: "/",
+    path: "/courses",
     component: layout,
-    children: [{ path: "/courses/index", component: Course }],
+    children: [
+      { path: "index", component: Course },
+      {
+        path: "learn/:courseId/:title",
+        component: () => import("@/views/Course/Learn/index.vue"),
+      },
+    ],
   },
 ];

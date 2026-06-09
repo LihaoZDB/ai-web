@@ -17,6 +17,11 @@ export const useUserStore = defineStore(
       user.value!.token = newToken;
     };
 
+    // 更新用户单词数量
+    const updateUserWordNumber = (num: number) => {
+      user.value!.wordNumber = num;
+    };
+
     // 点击完成保存之后更新用户信息
     const updateUser = (params: UserUpdate) => {
       user.value!.name = params.name as string;
@@ -30,7 +35,7 @@ export const useUserStore = defineStore(
 
     // 在设置界面默认获取的值
     const getUpdateUserInfo = computed<UserUpdate>(() => {
-      return { 
+      return {
         name: user.value!.name,
         email: user.value!.email,
         address: user.value!.address,
@@ -55,6 +60,7 @@ export const useUserStore = defineStore(
       getRefreshToken,
       updateToken,
       updateUser,
+      updateUserWordNumber,
       getUpdateUserInfo,
     };
   },
