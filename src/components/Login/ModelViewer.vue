@@ -50,7 +50,7 @@ const emits = defineEmits(["changeType"]);
 const canvasRef = useTemplateRef("canvasRef");
 
 const scene = new THREE.Scene(); //创建场景
-const clock = new THREE.Clock(); //创建时钟
+const clock = new THREE.Timer(); //创建时钟
 let currentModel: THREE.Group | null = null; // 记录当前选择的模型
 let mixer: THREE.AnimationMixer | null = null; // 记录当前动画混合器
 const loadModel = (url: LOGIN_TYPE) => {

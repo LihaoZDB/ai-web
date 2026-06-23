@@ -26,7 +26,8 @@ const active = ref<string | null>(null);
 
 const changeActive = (value: any) => {
   active.value = value.id;
-  emits("onGetRole", chatMode.value[0].role);
+  const role = chatMode.value.find((item: any) => item.id === value.id)?.role;
+  emits("onGetRole", role);
 };
 
 const getChatModeList = async () => {

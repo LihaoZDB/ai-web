@@ -22,6 +22,8 @@ const list = ref<ChatMessageList>([]);
 const userId = userStore.user?.id;
 const role = ref<ChatRoleType>("normal");
 const getRole = async (params: ChatRoleType) => {
+  console.log(params,"type==================");
+  
   role.value = params;
   const res = await getChatHistory(userId!, role.value);
   list.value = res.data;
