@@ -106,7 +106,7 @@ import type { Course } from "@en/common/course";
 import { ElMessage } from "element-plus";
 import { uploadUrl } from "@/apis";
 import type { CreatePayDto } from "@en/common/pay";
-import { createPay } from "@/apis/pay";
+import { createPay, getPayStatus } from "@/apis/pay";
 import { useSocket } from "@/hooks/useSocket";
 const { getSocket } = useSocket();
 const modelValue = defineModel<boolean>("modelValue", { required: true });
@@ -115,21 +115,52 @@ const props = defineProps<{
 }>();
 const isPay = ref(false); //是否支付中
 const timeExpire = ref(0); //支付剩余时间
+const outTradeNo = ref(""); //订单编号
+let pollTimer: ReturnType<typeof setInterval> | null = null; //轮询定时器
 
 watch(modelValue, (newVal) => {
   const socket = getSocket();
   if (newVal) {
-    socket?.on("paymentSuccess", () => {
-      ElMessage.success({
-        message: "支付成功",
-        duration: 10000, //10秒后自动关闭
-      });
-      close();
-    });
+    socket?.on("paymentSuccess", onPaySuccess);
   } else {
     socket?.off("paymentSuccess");
+    stopPolling();
   }
 });
+
+//支付成功回调
+const onPaySuccess = () => {
+  ElMessage.success({
+    message: "支付成功",
+    duration: 10000,
+  });
+  stopPolling();
+  close();
+};
+
+//开始轮询支付状态
+const startPolling = () => {
+  stopPolling();
+  pollTimer = setInterval(async () => {
+    if (!outTradeNo.value) return;
+    try {
+      const res = await getPayStatus(outTradeNo.value);
+      if (res.data === "TRADE_SUCCESS") {
+        onPaySuccess();
+      }
+    } catch {
+      // ignore
+    }
+  }, 3000);
+};
+
+//停止轮询
+const stopPolling = () => {
+  if (pollTimer) {
+    clearInterval(pollTimer);
+    pollTimer = null;
+  }
+};
 
 //图片地址
 const imageSrc = (url: string) => {
@@ -141,6 +172,8 @@ const tips = () => {
   ElMessage.error("支付超时，请重新支付");
   timeExpire.value = 0;
   isPay.value = false;
+  outTradeNo.value = "";
+  stopPolling();
 };
 
 //关闭弹框
@@ -148,6 +181,8 @@ const close = () => {
   modelValue.value = false; //关闭弹框
   timeExpire.value = 0; //重置倒计时
   isPay.value = false; //重置支付状态
+  outTradeNo.value = ""; //重置订单编号
+  stopPolling(); //停止轮询
 };
 
 //点击确认支付
@@ -161,8 +196,10 @@ const onConfirm = async () => {
   const res = await createPay(body);
   if (res.code === 200) {
     isPay.value = true; //设置支付中
+    outTradeNo.value = res.data.outTradeNo; //保存订单编号
     window.open(res.data.payUrl, "_blank"); //打开支付页面
     timeExpire.value = res.data.timeExpire; //设置倒计时
+    startPolling(); //开始轮询支付状态
   } else {
     ElMessage.error(res.message); //提示错误
     isPay.value = false; //重置支付状态

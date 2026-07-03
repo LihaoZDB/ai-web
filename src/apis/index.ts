@@ -3,15 +3,8 @@ import { useUserStore } from "@/stores/user";
 import router from "@/router";
 import { refreshTokenApi } from "./auth";
 import { ElMessage } from "element-plus";
-export const uploadUrl = import.meta.env.DEV
-  ? "http://192.168.32.19:9000"
-  : "https://线上地址待定";
-// export const uploadUrl = import.meta.env.DEV
-//   ? "http://192.168.31.97:9000"
-//   : "https://线上地址待定";
-export const socketUrl = import.meta.env.DEV
-  ? "http://localhost:3000"
-  : "wss://线上地址待定";
+export const uploadUrl = import.meta.env.VITE_MINIO_ENDPOINT
+export const socketUrl = import.meta.env.VITE_SOCKET_URL;
 export const timeout = 50000;
 // server服务端接口
 export const serverApi = axios.create({
